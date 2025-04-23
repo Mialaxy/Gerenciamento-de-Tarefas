@@ -18,13 +18,36 @@ typedef struct {
     int r;
     Tarefa t;
     
+    /*printf("Insira o id da tarefa: ");
+    scanf("%d", &t.id);
+    while(getchar() != '\n');*/
+
+    int i;
+
+    FILE *leitura_arq = fopen("tarefas.txt", "r");
+    t.id = 1;
+
+    if (leitura_arq != NULL)
+    {
+        Tarefa temp;
+        char linha_lida[400];
+
+        while (fgets(linha_lida, sizeof(linha_lida), leitura_arq)){
+            sscanf(linha_lida, "%d;[^;];[^;];%d", &temp.id, temp.nome, temp.descricao, &temp.concluida);
+            if (temp.id >= t.id){
+                t.id = temp.id + 1;
+            }
+        }
+        fclose(leitura_arq);
+    }
+
     pont_arq = fopen("tarefas.txt", "a");
 
     if(pont_arq == NULL){
         printf("Erro ao tentar abrir o arquivo!\n");
         exit(1);
     }
-
+    
     printf("Insira o nome da tarefa: ");
     fgets(t.nome, MAX, stdin);
     t.nome[strcspn(t.nome, "\n")] = 0;
@@ -32,10 +55,6 @@ typedef struct {
     printf("Insira a descricao da tarefa: ");
     fgets(t.descricao, MAX, stdin);
     t.descricao[strcspn(t.descricao, "\n")] = 0;
-
-    printf("Insira o id da tarefa: ");
-    scanf("%d", &t.id);
-    while(getchar() != '\n');
 
     t.concluida = 0;
     sprintf(linha,"%d;%s;%s;%d\n", t.id, t.nome, t.descricao, t.concluida);
